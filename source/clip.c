@@ -752,8 +752,7 @@ void ComputeClipWindows()
                         // no intersection, nullify it
                         pClip->Left[i][w] = 1;
                         pClip->Right[i][w] = 0;
-Clip_ok:
-                        j = 0; // dummy statement
+Clip_ok:;
                      }
                   }
                }

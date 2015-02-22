@@ -659,7 +659,7 @@ bool retro_serialize(void* data, size_t size)
    memcpy(buffer, &s7r, sizeof(s7r));
    buffer += sizeof(s7r);
    memcpy(buffer, &rtc_f9, sizeof(rtc_f9));
-   buffer += sizeof(rtc_f9);
+   //buffer += sizeof(rtc_f9);
 
    return true;
 }
@@ -707,7 +707,7 @@ bool retro_unserialize(const void* data, size_t size)
    memcpy(&s7r, buffer, sizeof(s7r));
    buffer += sizeof(s7r);
    memcpy(&rtc_f9, buffer, sizeof(rtc_f9));
-   buffer += sizeof(rtc_f9);
+   //buffer += sizeof(rtc_f9);
 
    S9xFixSA1AfterSnapshotLoad();
    FixROMSpeed();

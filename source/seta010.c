@@ -374,13 +374,6 @@ void ST010_Rotate(short Theta, short X0, short Y0, short* X1, short* Y1)
    *Y1 = (Y0 * ST010_Cos(Theta) >> 15) - (X0 * ST010_Sin(Theta) >> 15);
 }
 
-void SETA_Distance(short Y0, short X0, short* Distance)
-{
-   if (X0 < 0) X0 = -X0;
-   if (Y0 < 0) Y0 = -Y0;
-   *Distance = ((X0 * 0x7af0) + 0x4000) >> 15;
-}
-
 void ST010_SortDrivers(uint16_t Positions, uint16_t Places[32], uint16_t Drivers[32])
 {
    bool Sorted;
@@ -661,7 +654,6 @@ void S9xSetST010(uint32_t Address, uint8_t Byte)
          y = Memory.SRAM[2] | (Memory.SRAM[3] << 8);
 #endif
          square = (int16_t)sqrt((double)(y * y + x * x));
-         //SETA_Distance( x,y,square );
 
 #if defined(FAST_LSB_WORD_ACCESS) && !defined(ANDROID)
          /* TODO - FIXME */

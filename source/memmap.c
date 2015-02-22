@@ -462,8 +462,6 @@ bool S9xInitMemory()
    Memory.ROM += 0x8000;  // still 32-byte aligned
 
    Memory.C4RAM    = Memory.ROM + 0x400000 + 8192 * 8;  // still 32-byte aligned
-   Memory.ROM    = Memory.ROM;
-   Memory.SRAM   = Memory.SRAM;
 
    SuperFX.pvRegisters = &Memory.FillRAM [0x3000];
    SuperFX.nRamBanks = 2; // Most only use 1.  1=64KB, 2=128KB=1024Mb
@@ -699,9 +697,6 @@ again:
       TotalFileSize -= 512;
       S9xMessage(S9X_INFO, S9X_HEADER_WARNING,
                  "Try specifying the -nhd command line option if the game doesn't work\n");
-      //modifying ROM, so we need to rescore
-      hi_score = ScoreHiROM(false, 0);
-      lo_score = ScoreLoROM(false, 0);
    }
 
    Memory.CalculatedSize = TotalFileSize & ~0x1FFF; // round down to lower 0x2000
@@ -733,7 +728,7 @@ again:
          S9xDeinterleaveType1(TotalFileSize, Memory.ROM);
    }
 
-   //CalculatedSize is now set, so rescore
+   //CalculatedSize is now set and the ROM may also have been modified, so rescore
    hi_score = ScoreHiROM(false, 0);
    lo_score = ScoreLoROM(false, 0);
 

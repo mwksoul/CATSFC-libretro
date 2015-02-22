@@ -196,18 +196,17 @@ void S9xDoDMA(uint8_t Channel)
 #endif   
    if (Settings.SPC7110 && (d->AAddress == 0x4800 || d->ABank == 0x50))
    {
-      uint32_t i, j;
+      uint32_t i;
       i = (s7r.reg4805 | (s7r.reg4806 << 8));
       i *= s7r.AlignBy;
       i += s7r.bank50Internal;
       i %= DECOMP_BUFFER_SIZE;
-      j = 0;
       if ((i + d->TransferBytes) < DECOMP_BUFFER_SIZE)
          spc7110_dma = &s7r.bank50[i];
       else
       {
+         uint32_t j = DECOMP_BUFFER_SIZE - i;
          spc7110_dma = (uint8_t*)malloc(d->TransferBytes);
-         j = DECOMP_BUFFER_SIZE - i;
          memcpy(spc7110_dma, &s7r.bank50[i], j);
          memcpy(&spc7110_dma[j], s7r.bank50, d->TransferBytes - j);
          s7_wrap = true;

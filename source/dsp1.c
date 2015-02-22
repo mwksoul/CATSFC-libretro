@@ -1474,9 +1474,6 @@ void DSP4SetByte(uint8_t byte, uint16_t address)
          // unknown
          case 0x000A:
          {
-            int16_t in1a = DSP4_READ_WORD(0);
-            int16_t in2a = DSP4_READ_WORD(2);
-            int16_t in3a = DSP4_READ_WORD(4);
             int16_t out1a, out2a;
 
             out1a = (short)0xff40;

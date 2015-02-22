@@ -378,9 +378,8 @@ static void C4DrawLine(int32_t X1, int32_t Y1, int16_t Z1,
       //.loop
       if (X1 > 0xff && Y1 > 0xff && X1 < 0x6000 && Y1 < 0x6000)
       {
-         uint16_t addr = ((X1 & ~0x7ff) + (Y1 & ~0x7ff) * 12 + (Y1 & 0x700)) >> 7;
-         addr = (((Y1 >> 8) >> 3) << 8) - (((Y1 >> 8) >> 3) << 6) + (((
-                   X1 >> 8) >> 3) << 4) + ((Y1 >> 8) & 7) * 2;
+         uint16_t addr = (((Y1 >> 8) >> 3) << 8) - (((Y1 >> 8) >> 3) << 6) + (((
+                            X1 >> 8) >> 3) << 4) + ((Y1 >> 8) & 7) * 2;
          uint8_t bit = 0x80 >> ((X1 >> 8) & 7);
          Memory.C4RAM[addr + 0x300] &= ~bit;
          Memory.C4RAM[addr + 0x301] &= ~bit;

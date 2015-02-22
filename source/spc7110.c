@@ -790,7 +790,6 @@ uint8_t S9xGetSPC7110(uint16_t Address)
          i %= s7r.DataRomSize;
          i += s7r.DataRomOffset;
          uint8_t tmp = Memory.ROM[i];
-         i = ((s7r.reg4813 << 16) | (s7r.reg4812 << 8) | s7r.reg4811);
          if (0x60 == (s7r.reg4818 & 0x60))
          {
             i = ((s7r.reg4813 << 16) | (s7r.reg4812 << 8) | s7r.reg4811);
@@ -1429,7 +1428,6 @@ void S9xSetSPC7110(uint8_t data, uint16_t Address)
       break;
    //writes to RTC status register aren't expected to be meaningful
    default:
-      Address -= 0x4800;
       break;
       //16 BIT MULTIPLIER: ($FF00) high byte, defval:00
    }

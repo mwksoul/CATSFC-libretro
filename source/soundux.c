@@ -1102,8 +1102,6 @@ void S9xMixSamples(uint8_t* buffer, int sample_count)
    MixStereo(sample_count);
 
    /* Mix and convert waveforms */
-   int byte_count = sample_count << 1;
-
    if (SoundData.echo_enable && SoundData.echo_buffer_size)
    {
       // 16-bit stereo sound with echo enabled ...
