@@ -1919,52 +1919,32 @@ uint8_t S9xGetCPU(uint16_t Address)
       case 0x4016:
       {
          if (Memory.FillRAM [0x4016] & 1)
-         {
-            if ((!Settings.SwapJoypads &&
-                  IPPU.Controller == SNES_MOUSE_SWAPPED) ||
-                  (Settings.SwapJoypads &&
-                   IPPU.Controller == SNES_MOUSE))
-            {
-               if (++PPU.MouseSpeed [0] > 2)
-                  PPU.MouseSpeed [0] = 0;
-            }
-            return (0);
-         }
+            return 0;
 
-         int ind = Settings.SwapJoypads ? 1 : 0;
-         byte = IPPU.Joypads[ind] >> (PPU.Joypad1ButtonReadPos ^ 15);
-         PPU.Joypad1ButtonReadPos++;
-         return (byte & 1);
+         return (IPPU.Joypads[0] >> (PPU.Joypad1ButtonReadPos++ ^ 15) & 1);
       }
       case 0x4017:
       {
-         if (Memory.FillRAM [0x4016] & 1)
+         if (Memory.FillRAM [0x4017] & 1)
          {
             // MultiPlayer5 adaptor is only allowed to be plugged into port 2
             switch (IPPU.Controller)
             {
             case SNES_MULTIPLAYER5:
                return (2);
-            case SNES_MOUSE_SWAPPED:
-               if (Settings.SwapJoypads && ++PPU.MouseSpeed [0] > 2)
-                  PPU.MouseSpeed [0] = 0;
-               break;
-
             case SNES_MOUSE:
-               if (!Settings.SwapJoypads && ++PPU.MouseSpeed [0] > 2)
+               if (++PPU.MouseSpeed [0] > 2)
                   PPU.MouseSpeed [0] = 0;
                break;
             }
-            return (0x00);
+            return 0;
          }
-
-         int ind = Settings.SwapJoypads ? 0 : 1;
 
          if (IPPU.Controller == SNES_MULTIPLAYER5)
          {
             if (Memory.FillRAM [0x4201] & 0x80)
             {
-               byte = ((IPPU.Joypads[ind] >> (PPU.Joypad2ButtonReadPos ^ 15)) & 1) |
+               byte = ((IPPU.Joypads[1] >> (PPU.Joypad2ButtonReadPos ^ 15)) & 1) |
                       (((IPPU.Joypads[2] >> (PPU.Joypad2ButtonReadPos ^ 15)) & 1) << 1);
                PPU.Joypad2ButtonReadPos++;
                return (byte);
@@ -1986,7 +1966,7 @@ uint8_t S9xGetCPU(uint16_t Address)
             in_bit %= 32;
             return rv;
          }
-         return ((IPPU.Joypads[ind] >> (PPU.Joypad2ButtonReadPos++ ^ 15)) & 1);
+         return ((IPPU.Joypads[1] >> (PPU.Joypad2ButtonReadPos++ ^ 15)) & 1);
       }
       default:
          return OpenBus;
@@ -2446,8 +2426,7 @@ void S9xProcessMouse(int which1)
    int x, y;
    uint32_t buttons;
 
-   if ((IPPU.Controller == SNES_MOUSE || IPPU.Controller == SNES_MOUSE_SWAPPED)
-         && S9xReadMousePosition(which1, &x, &y, &buttons))
+   if (IPPU.Controller == SNES_MOUSE && S9xReadMousePosition(which1, &x, &y, &buttons))
    {
       int delta_x, delta_y;
 #define MOUSE_SIGNATURE 0x1
@@ -2500,10 +2479,7 @@ void S9xProcessMouse(int which1)
       else
          IPPU.Mouse [which1] |= delta_y << 24;
 
-      if (IPPU.Controller == SNES_MOUSE_SWAPPED)
-         IPPU.Joypads [0] = IPPU.Mouse [which1];
-      else
-         IPPU.Joypads [1] = IPPU.Mouse [which1];
+      IPPU.Joypads [1] = IPPU.Mouse [which1];
    }
 }
 
@@ -2550,12 +2526,6 @@ void S9xNextController()
       IPPU.Controller = SNES_JOYPAD;
       break;
    case SNES_JOYPAD:
-      if (Settings.MouseMaster)
-      {
-         IPPU.Controller = SNES_MOUSE_SWAPPED;
-         break;
-      }
-   case SNES_MOUSE_SWAPPED:
       if (Settings.MouseMaster)
       {
          IPPU.Controller = SNES_MOUSE;
@@ -2750,16 +2720,15 @@ void S9xUpdateJoypads()
          PPU.Joypad2ButtonReadPos = 0;
          PPU.Joypad3ButtonReadPos = 16;
       }
-      int ind = Settings.SwapJoypads ? 1 : 0;
 
-      Memory.FillRAM [0x4218] = (uint8_t) IPPU.Joypads [ind];
-      Memory.FillRAM [0x4219] = (uint8_t)(IPPU.Joypads [ind] >> 8);
-      Memory.FillRAM [0x421a] = (uint8_t) IPPU.Joypads [ind ^ 1];
-      Memory.FillRAM [0x421b] = (uint8_t)(IPPU.Joypads [ind ^ 1] >> 8);
+      Memory.FillRAM [0x4218] = (uint8_t) IPPU.Joypads [0];
+      Memory.FillRAM [0x4219] = (uint8_t)(IPPU.Joypads [0] >> 8);
+      Memory.FillRAM [0x421a] = (uint8_t) IPPU.Joypads [1];
+      Memory.FillRAM [0x421b] = (uint8_t)(IPPU.Joypads [1] >> 8);
       if (Memory.FillRAM [0x4201] & 0x80)
       {
-         Memory.FillRAM [0x421c] = (uint8_t) IPPU.Joypads [ind];
-         Memory.FillRAM [0x421d] = (uint8_t)(IPPU.Joypads [ind] >> 8);
+         Memory.FillRAM [0x421c] = (uint8_t) IPPU.Joypads [0];
+         Memory.FillRAM [0x421d] = (uint8_t)(IPPU.Joypads [0] >> 8);
          Memory.FillRAM [0x421e] = (uint8_t) IPPU.Joypads [2];
          Memory.FillRAM [0x421f] = (uint8_t)(IPPU.Joypads [2] >> 8);
       }
